@@ -1,8 +1,8 @@
 {
   "name": "yaml-schema-validator",
-  "version": "1.2.3",
+  "version": "0.2.0",
   "description": "Schema validator for yaml files",
-  "author": "Ketan Saxena",
+  "author": "Garmu",
   "license": "MIT",
   "main": "index.js",
   "scripts": {
@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ketanTechracers/schema-validator"
+    "url": "https://github.com/garmu/schema-validator"
   },
   "devDependencies": {
     "node-dev": "3.1.3",

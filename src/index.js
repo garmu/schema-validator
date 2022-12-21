@@ -38,28 +38,42 @@ const validateSchema =  (targetObject, options = {}) => {
 const validateExtraFields = (targetObj, schemaObj) => {
   let extras = []
 
-  const leafNode = (obj) => {
-    return obj && ([String, Number, Boolean].includes(obj.type) || typeof obj.required === 'boolean')
+  const leafNode = (schemaKey, value) => {
+    if (!schemaKey) {
+      return false;
+    } else if ([String, Number, Boolean].includes(schemaKey.type)) {
+      return !schemaKey.use || schemaKey.use(value);
+    } else {
+      return schemaKey.required === 'boolean';
+    }
   }
 
   const _parseTarget = (target, schema, parsedLevel = '') => {
-    if (typeof target !== 'object'){
+    if (typeof target !== 'object') {
       return
     }
 
     for(let key in target) {
       let schemaKey = target instanceof Array ? schema[0] : schema[key]
       const nextLevel = parsedLevel ? `${parsedLevel}.${key}` : key
-      if(!schemaKey || typeof target[key] !== 'object' && !leafNode(schemaKey)) {
-        extras.push({ path: nextLevel, message: `${nextLevel} is not present in schema`})
+      const value = target[key];
+      if(!schemaKey || typeof target[key] !== 'object' && !leafNode(schemaKey, value)) {
+        extras.push({ path: nextLevel, message: getMessage(schemaKey, nextLevel)})
       } else {
-        _parseTarget(target[key], schemaKey, nextLevel)
+        _parseTarget(value, schemaKey, nextLevel)
       }
     }
   }
 
   _parseTarget(targetObj, schemaObj)
   return extras;
+}
+
+const getMessage = (schemaKey, nextLevel) => {
+  if (schemaKey && schemaKey.message) {
+    return schemaKey.message;
+  }
+  return `${nextLevel} is not present in schema`;
 }
 
 
